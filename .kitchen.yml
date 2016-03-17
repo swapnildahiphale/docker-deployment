@@ -1,0 +1,56 @@
+driver:
+  name: vagrant
+
+driver_config:
+  customize:
+    cpus: 2
+    memory: 1024
+
+provisioner:
+  name: chef_zero
+  require_chef_omnibus: true
+  attributes:
+    docker:
+      container_cmd_timeout: 30
+
+verifier:
+  name: inspec
+
+platforms:
+- name: ubuntu-14.04
+  run_list:
+    - recipe[apt]
+  driver_config:
+    box: opscode-ubuntu-14.04
+    box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-14.04_chef-provisionerless.box
+  run_list:
+  - recipe[apt]
+  - recipe[apt-docker]
+
+
+
+suites:
+######################################
+# docker_installation_package resource
+######################################
+- name: installation_package-1100
+  includes: [
+    'ubuntu-14.04'
+  ]
+  attributes:
+    docker:
+      version: '1.10.0'
+  run_list:
+  - recipe[docker-deployment::auto]
+
+
+#####################
+# docker_service auto
+#####################
+
+- name: auto
+  includes: [
+    'ubuntu-14.04'
+  ]
+  run_list:
+  - recipe[docker-deployment::auto]
