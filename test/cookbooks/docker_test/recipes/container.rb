@@ -30,19 +30,19 @@ docker_image 'nginx' do
 end
 
 docker_image 'redis' do
-  tag 'v0.1.0'
-  source '/root/docker-workflow/redis'
-  action :build
+  tag 'latest'
+  action :pull
 end
 
 
 
 #######
-# links
+# linkd containers
 #######
 
 # docker inspect -f "{{ .Config.Env }}" link_source
 # docker inspect -f "{{ .NetworkSettings.IPAddress }}" link_source
+
 docker_container 'redis' do
   repo 'redis'
   action :run
@@ -69,62 +69,9 @@ docker_container 'nginx' do
   links ['node1:node1']
   action :run
 end
-#docker_container 'link_source_2' do
-#  repo 'alpine'
-#  tag '3.1'
-#  env ['FOO=few', 'BIZ=buzz']
-#  command 'sh -c "trap exit 0 SIGTERM; while :; do sleep 1; done"'
-#  port '322'
-#  kill_after 1
-#  action :run
-#end
 
-# docker inspect -f "{{ .HostConfig.Links }}" link_target_1
-# docker inspect -f "{{ .Config.Env }}" link_target_1
-#docker_container 'link_target_1' do
-#  repo 'alpine'
-#  tag '3.1'
-#  env ['ASD=asd']
-#  command 'ping -c 1 hello'
-#  links 'link_source:hello'
-#  subscribes :run, 'docker_container[link_source]'
-#  action :run_if_missing
-#end
 
-# docker logs linker_target_2
-#docker_container 'link_target_2' do
-#  repo 'alpine'
-#  tag '3.1'
-#  command 'env'
-#  links ['link_source:hello']
-#  subscribes :run, 'docker_container[link_source]'
-#  action :run_if_missing
-#end
-
-# docker logs linker_target_3
-#docker_container 'link_target_3' do
-#  repo 'alpine'
-#  tag '3.1'
-#  env ['ASD=asd']
-#  command 'ping -c 1 hello_again'
-#  links ['link_source:hello', 'link_source_2:hello_again']
-#  subscribes :run, 'docker_container[link_source]'
-#  subscribes :run, 'docker_container[link_source_2]'
-#  action :run_if_missing
-#end
-
-# docker logs linker_target_4
-#docker_container 'link_target_4' do
-#  repo 'alpine'
-#  tag '3.1'
-#  command 'env'
-#  links ['link_source:hello', 'link_source_2:hello_again']
-#  subscribes :run, 'docker_container[link_source]'
-#  subscribes :run, 'docker_container[link_source_2]'
-#  action :run_if_missing
-#end
-
-# When we deploy the link_source container links are broken and we
+# When we deploy the redis container links are broken and we
 # have to redeploy the linked containers to fix them.
 execute 'redeploy_link_source' do
   command 'touch /marker_container_redeploy_link_source'
@@ -133,9 +80,5 @@ execute 'redeploy_link_source' do
   notifies :redeploy, 'docker_container[node1]'
   notifies :redeploy, 'docker_container[node2]'
   notifies :redeploy, 'docker_container[nginx]'
-
-#  notifies :redeploy, 'docker_container[link_target_2]'
-#  notifies :redeploy, 'docker_container[link_target_3]'
-#  notifies :redeploy, 'docker_container[link_target_4]'
   action :run
 end

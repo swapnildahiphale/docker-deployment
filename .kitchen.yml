@@ -53,4 +53,4 @@ suites:
     'ubuntu-14.04'
   ]
   run_list:
-  - recipe[docker-deployment::auto]
+  - recipe[docker_test::auto]

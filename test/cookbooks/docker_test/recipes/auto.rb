@@ -22,11 +22,11 @@ end
 ##############
 # Clone repo if doesn't exists
 ##############
-#execute 'Clone git repo first time' do
-#	cwd '/root'
-#    command 'git clone https://github.com/swapnildahiphale/docker-workflow.git'
-#     not_if { Dir.exist?("/root/docker-workflow") }
-#end
+execute 'Clone git repo first time' do
+	cwd '/root'
+    command 'git clone https://github.com/swapnildahiphale/docker-workflow.git'
+     not_if { Dir.exist?("/root/docker-workflow") }
+end
 
 ##############
 # Pull latest code

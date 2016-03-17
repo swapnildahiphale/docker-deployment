@@ -5,6 +5,7 @@ maintainer_email 'Swapnil2233@yahoo.com'
 description 'Provides docker_service, docker_image, and docker_container resources'
 version '2.5.8'
 
+depends 'docker'
 depends 'compat_resource', '~> 12.8.0'
 
 supports 'amazon'
